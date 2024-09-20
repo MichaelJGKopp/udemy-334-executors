@@ -43,11 +43,11 @@ public class Main {
     );
 
     try {
-      var results = multiExecutor.invokeAll(taskList);
-      for (var result : results) {
-        System.out.println(result.get(500, TimeUnit.MILLISECONDS));
-      }
-    } catch (Exception e) {
+      var results = multiExecutor.invokeAny(taskList);
+//      for (var result : results) {
+        System.out.println(results);
+//      }
+    } catch (InterruptedException | ExecutionException e) {
       throw new RuntimeException(e);
     } finally {
       multiExecutor.shutdown();
@@ -72,7 +72,7 @@ public class Main {
           ThreadColor.ANSI_BLUE.color() + blueValue.get(500, TimeUnit.MILLISECONDS));
         System.out.println(
           ThreadColor.ANSI_GREEN.color() + greenValue.get(500, TimeUnit.MILLISECONDS));
-      } catch (InterruptedException | ExecutionException | TimeoutException e) {
+      } catch (Exception e) {
         throw new RuntimeException(e);
       }
     } finally {
