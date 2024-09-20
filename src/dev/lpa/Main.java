@@ -2,6 +2,7 @@ package dev.lpa;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 class ColorThreadFactory implements ThreadFactory {
 
@@ -26,8 +27,48 @@ public class Main {
 
     var blueExecutor = Executors.newSingleThreadExecutor(
       new ColorThreadFactory(ThreadColor.ANSI_BLUE));
+//      r -> new Thread(r, ThreadColor.ANSI_BLUE.name()));
     blueExecutor.execute(Main::countDown); // running tasks sequentially
     blueExecutor.shutdown();
+
+    boolean isDone = false;
+    try {
+      isDone = blueExecutor.awaitTermination(500, TimeUnit.MILLISECONDS);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+
+    if (isDone) {
+      System.out.println("Blue finished, starting Yellow");
+      var yellowExecutor = Executors.newSingleThreadExecutor(
+        new ColorThreadFactory(ThreadColor.ANSI_YELLOW));
+//      r -> new Thread(r, ThreadColor.ANSI_YELLOW.name()));
+      yellowExecutor.execute(Main::countDown); // running tasks sequentially
+      yellowExecutor.shutdown();
+      try {
+        isDone = yellowExecutor.awaitTermination(500, TimeUnit.MILLISECONDS);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    if (isDone) {
+      System.out.println("Yello finished, starting Red");
+      var redExecutor = Executors.newSingleThreadExecutor(
+        new ColorThreadFactory(ThreadColor.ANSI_RED));
+//      r -> new Thread(r, ThreadColor.ANSI_RED.name()));
+      redExecutor.execute(Main::countDown); // running tasks sequentially
+      redExecutor.shutdown();
+      try {
+        isDone = redExecutor.awaitTermination(400, TimeUnit.MILLISECONDS);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    if (isDone) {
+      System.out.println("All processes finished.");
+    }
   }
   public static void notmain(String[] args) {
 
