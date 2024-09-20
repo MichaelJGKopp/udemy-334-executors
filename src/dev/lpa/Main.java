@@ -1,8 +1,16 @@
 package dev.lpa;
 
+import java.util.concurrent.Executors;
+
 public class Main {
 
   public static void main(String[] args) {
+
+    var blueExecutor = Executors.newSingleThreadExecutor();
+    blueExecutor.execute(Main::countDown); // running tasks sequentially
+    blueExecutor.shutdown();
+  }
+  public static void notmain(String[] args) {
 
     Thread blue = new Thread(Main::countDown, ThreadColor.ANSI_BLUE.name());
     Thread yellow = new Thread(Main::countDown, ThreadColor.ANSI_YELLOW.name());
