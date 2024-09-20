@@ -1,12 +1,31 @@
 package dev.lpa;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
+class ColorThreadFactory implements ThreadFactory {
+
+  private String threadName;
+
+  public ColorThreadFactory(ThreadColor color) {
+    this.threadName = color.name();
+  }
+
+  @Override
+  public Thread newThread(Runnable r) {
+
+    Thread thread = new Thread(r);
+    thread.setName(threadName);
+    return thread;
+  }
+}
 
 public class Main {
 
   public static void main(String[] args) {
 
-    var blueExecutor = Executors.newSingleThreadExecutor();
+    var blueExecutor = Executors.newSingleThreadExecutor(
+      new ColorThreadFactory(ThreadColor.ANSI_BLUE));
     blueExecutor.execute(Main::countDown); // running tasks sequentially
     blueExecutor.shutdown();
   }
