@@ -36,6 +36,17 @@ public class Main {
 
   public static void main(String[] args) {
 
+    var multiExecutor = Executors.newCachedThreadPool();
+    try {
+      multiExecutor.execute(() -> Main.sum(1, 10, 1, "red"));
+      multiExecutor.execute(() -> Main.sum(10, 100, 10, "blue"));
+      multiExecutor.execute(() -> Main.sum(2, 20, 2, "green"));
+    } finally {
+      multiExecutor.shutdown();
+    }
+  }
+  public static void fixedMain(String[] args) {
+
     int count = 6;
     var multiExecutor = Executors.newFixedThreadPool(
       3, new ColorThreadFactory()
