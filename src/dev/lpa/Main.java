@@ -167,7 +167,7 @@ public class Main {
     }
     String color = threadColor.color();
     int sum = 0;
-    for (int i = start; i < end; i += delta) {
+    for (int i = start; i <= end; i += delta) {
       sum += i;
     }
     System.out.println(color + Thread.currentThread().getName() + ", " + colorString + " " + sum);
