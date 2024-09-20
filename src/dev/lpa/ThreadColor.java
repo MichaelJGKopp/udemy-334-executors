@@ -10,7 +10,7 @@ public enum ThreadColor {
   ANSI_GREEN("\u001B[32m"),
   ANSI_PURPLE("\u001B[35m"),
   ANSI_RED("\u001B[31m"),
-  NASI_YELLOW("\u001b[33m");
+  ANSI_YELLOW("\u001b[33m");
 
   private final String color;
 
