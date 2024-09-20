@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 class ColorThreadFactory implements ThreadFactory {
 
   private String threadName;
-  private int colorValue = 3;
+  private int colorValue = 1;
 
   public ColorThreadFactory() {
   }
@@ -25,7 +25,7 @@ class ColorThreadFactory implements ThreadFactory {
       name = ThreadColor.values()[colorValue].name();
     }
     if (++colorValue > (ThreadColor.values().length - 1)) {
-      colorValue = 3;
+      colorValue = 1;
     }
     thread.setName(name);
     return thread;
@@ -36,15 +36,18 @@ public class Main {
 
   public static void main(String[] args) {
 
-    int count = 3;
+    int count = 6;
     var multiExecutor = Executors.newFixedThreadPool(
-      count, new ColorThreadFactory()
+      3, new ColorThreadFactory()
     );
 
-    for (int i = 0; i < count; i++) {
-      multiExecutor.execute(Main::countDown);
+    try {
+      for (int i = 0; i < count; i++) {
+        multiExecutor.execute(Main::countDown);
+      }
+    } finally {
+      multiExecutor.shutdown();
     }
-    multiExecutor.shutdown();
 
     boolean isDone = false;
     try {
@@ -152,5 +155,21 @@ public class Main {
     for (int i = 20; i >= 0; i--) {
       System.out.println(color + " " + threadName.replace("ANSI_", "") + " " + i);
     }
+  }
+
+  private static void sum(int start, int end , int delta, String colorString) {
+
+    var threadColor = ThreadColor.ANSI_RESET;
+    try {
+      threadColor = ThreadColor.valueOf("ANSI_" + colorString.toUpperCase());
+    } catch (IllegalArgumentException ignore) {
+      // User may pass a bad color name, Will just ignore this error.
+    }
+    String color = threadColor.color();
+    int sum = 0;
+    for (int i = start; i < end; i += delta) {
+      sum += i;
+    }
+    System.out.println(color + Thread.currentThread().getName() + ", " + colorString + " " + sum);
   }
 }
