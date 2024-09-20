@@ -7,6 +7,10 @@ import java.util.concurrent.TimeUnit;
 class ColorThreadFactory implements ThreadFactory {
 
   private String threadName;
+  private int colorValue = 3;
+
+  public ColorThreadFactory() {
+  }
 
   public ColorThreadFactory(ThreadColor color) {
     this.threadName = color.name();
@@ -16,7 +20,14 @@ class ColorThreadFactory implements ThreadFactory {
   public Thread newThread(Runnable r) {
 
     Thread thread = new Thread(r);
-    thread.setName(threadName);
+    String name = threadName;
+    if (name == null) {
+      name = ThreadColor.values()[colorValue].name();
+    }
+    if (++colorValue > (ThreadColor.values().length - 1)) {
+      colorValue = 3;
+    }
+    thread.setName(name);
     return thread;
   }
 }
