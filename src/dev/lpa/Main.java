@@ -1,8 +1,6 @@
 package dev.lpa;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 class ColorThreadFactory implements ThreadFactory {
 
@@ -38,10 +36,23 @@ public class Main {
 
     var multiExecutor = Executors.newCachedThreadPool();
     try {
-      multiExecutor.submit(() -> Main.sum(1, 10, 1, "red"));
-      multiExecutor.submit(() -> Main.sum(10, 100, 10, "blue"));
-      multiExecutor.submit(() -> Main.sum(2, 20, 2, "green"));
+      var redValue = multiExecutor.submit(
+        () -> Main.sum(1, 10, 1, "red"));
+      var blueValue = multiExecutor.submit(
+        () -> Main.sum(10, 100, 10, "blue"));
+      var greenValue = multiExecutor.submit(
+        () -> Main.sum(2, 20, 2, "green"));
 
+      try {
+        System.out.println(
+          ThreadColor.ANSI_RED.color() + redValue.get(500, TimeUnit.MILLISECONDS));
+        System.out.println(
+          ThreadColor.ANSI_BLUE.color() + blueValue.get(500, TimeUnit.MILLISECONDS));
+        System.out.println(
+          ThreadColor.ANSI_GREEN.color() + greenValue.get(500, TimeUnit.MILLISECONDS));
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     } finally {
       multiExecutor.shutdown();
     }
@@ -169,7 +180,7 @@ public class Main {
     }
   }
 
-  private static void sum(int start, int end , int delta, String colorString) {
+  private static int sum(int start, int end , int delta, String colorString) {
 
     var threadColor = ThreadColor.ANSI_RESET;
     try {
@@ -183,5 +194,6 @@ public class Main {
       sum += i;
     }
     System.out.println(color + Thread.currentThread().getName() + ", " + colorString + " " + sum);
+    return sum;
   }
 }
