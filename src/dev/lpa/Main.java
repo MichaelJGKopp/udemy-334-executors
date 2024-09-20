@@ -9,8 +9,6 @@ public class Main {
     Thread red = new Thread(Main::countDown, ThreadColor.ANSI_RED.name());
 
     blue.start();
-    yellow.start();
-    red.start();
 
     try {
       blue.join();
@@ -19,11 +17,17 @@ public class Main {
       // means critical issue either handled above or terminates app
       // 'converts' checked to unchecked exception, that does not have to be handled
     }
+
+    yellow.start();
+
     try {
       yellow.join();
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
+
+    red.start();
+
     try {
       red.join();
     } catch (InterruptedException e) {
