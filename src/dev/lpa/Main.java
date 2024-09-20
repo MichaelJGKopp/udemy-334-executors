@@ -36,6 +36,30 @@ public class Main {
 
   public static void main(String[] args) {
 
+    int count = 3;
+    var multiExecutor = Executors.newFixedThreadPool(
+      count, new ColorThreadFactory()
+    );
+
+    for (int i = 0; i < count; i++) {
+      multiExecutor.execute(Main::countDown);
+    }
+    multiExecutor.shutdown();
+
+    boolean isDone = false;
+    try {
+      isDone = multiExecutor.awaitTermination(500, TimeUnit.MILLISECONDS);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+
+    if(isDone) {
+      System.out.println("Tasks are finished.");
+    }
+  }
+
+  public static void singleMain(String[] args) {
+
     var blueExecutor = Executors.newSingleThreadExecutor(
       new ColorThreadFactory(ThreadColor.ANSI_BLUE));
 //      r -> new Thread(r, ThreadColor.ANSI_BLUE.name()));
